@@ -1,3 +1,3 @@
-variable "repository_name" {
-  default = "marek_repo"
-}
+//variable "repository_name" {
+//  default = "marek_repo"
+//}

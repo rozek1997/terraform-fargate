@@ -1,6 +1,26 @@
 #changed constant ami to use data source!
+data "aws_ami" "nat_instance_ami"{
+  owners = ["amazon"]
+  most_recent = true
+
+  filter {
+    name = "name"
+    values = ["amzn-ami-vpc-nat*"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
 
 resource "aws_instance" "nat_instance" {
+//  ami = data.aws_ami.nat_instance_ami.image_id
   ami = "ami-058436d7e072250b3"
   instance_type = "t2.micro"
   source_dest_check = false
