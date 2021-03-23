@@ -2,12 +2,38 @@
 version: 2.1
 # Use a package of configuration called an orb.
 orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
+  aws-ecs: circleci/aws-ecs@2.1.0
+  aws-cli: circleci/aws-cli@1.4.1
 # Orchestrate or schedule a set of jobs
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  deploy:
     jobs:
-      - welcome/run
+      - update-tag
+
+jobs: 
+  update-tag:
+    docker:
+      - image: 'cimg/python:3.9.1'
+    steps:
+      - run:
+          command: |
+            echo 'export APP_NAME=crowdcomms' >> $BASH_ENV
+            echo 'export WORKSPACE=dev' >> $BASH_ENV
+            echo 'export MODULE_NAME=api' >> $BASH_ENV
+            source $BASH_ENV
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
+      - aws-ecs/update-service:
+          cluster-name: '${APP_NAME}-${WORKSPACE}'
+          container-image-name-updates: 'container=${APP_NAME}_${MODULE_NAME},tag=${CIRCLE_SHA1}'
+          family: '${WORKSPACE}-${MODULE_NAME}'
+          service-name: '${APP_NAME}-${WORKSPACE}-${MODULE_NAME}'
+
+
+
+
+
+
+
