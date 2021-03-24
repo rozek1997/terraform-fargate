@@ -25,7 +25,7 @@ variable "asg_min" {
   default = {
     dev     = 1
     staging = 1
-    dev     = 5
+    prod     = 5
   }
 }
 

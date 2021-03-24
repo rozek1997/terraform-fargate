@@ -6,46 +6,6 @@ resource "aws_appautoscaling_target" "beat" {
   max_capacity       = var.asg_max[terraform.workspace]
 }
 
-//resource "aws_appautoscaling_policy" "beat_up" {
-//  name               = "scale-up"
-//  policy_type        = "StepScaling"
-//  resource_id        = aws_appautoscaling_target.beat.resource_id
-//  scalable_dimension = aws_appautoscaling_target.beat.scalable_dimension
-//  service_namespace  = aws_appautoscaling_target.beat.service_namespace
-//
-//  step_scaling_policy_configuration {
-//    adjustment_type         = "ChangeInCapacity"
-//    cooldown                = 360
-//    metric_aggregation_type = "Maximum"
-//
-//    step_adjustment {
-//      metric_interval_lower_bound = 0
-//      scaling_adjustment          = 1
-//    }
-//  }
-//
-//}
-//
-//# Remove one task
-//resource "aws_appautoscaling_policy" "beat_down" {
-//  name               = "scale-up"
-//  policy_type        = "StepScaling"
-//  resource_id        = aws_appautoscaling_target.beat.resource_id
-//  scalable_dimension = aws_appautoscaling_target.beat.scalable_dimension
-//  service_namespace  = aws_appautoscaling_target.beat.service_namespace
-//
-//  step_scaling_policy_configuration {
-//    adjustment_type         = "ChangeInCapacity"
-//    cooldown                = 300
-//    metric_aggregation_type = "Maximum"
-//
-//    step_adjustment {
-//      metric_interval_lower_bound = 0
-//      scaling_adjustment          = -1
-//    }
-//  }
-//}
-
 # CloudWatch alarm that triggers the autoscaling up policy
 resource "aws_cloudwatch_metric_alarm" "beat_service_cpu_high" {
   alarm_name          = join("-", [terraform.workspace, var.module_name, "CPUUtilizationHigh"])

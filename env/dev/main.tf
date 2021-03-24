@@ -32,10 +32,10 @@ module "alb" {
 
 module "ecs" {
   source = "../../modules/ecs"
+  application_name = "crowdcomms_test"
   aws_region = var.region
   account_id = var.account_id
   api_target_group = module.alb.api_target_group
-  application_name = "crowdcomms_test"
   aws_storage_bucket_name = "aws_storage_bucket_name"
   aws_temp_bucket_name = "aws_temp_bucket_name"
   cc_api_image_tag = var.cc_api_image_tag
@@ -44,8 +44,8 @@ module "ecs" {
   creds_bucket = "creds_bucket"
   private_subnet_ids = module.vpc.vpc_private_subnets_ids
   public_subnet_ids = module.vpc.vpc_public_subnets_ids
-  security_group_ids = [module.vpc.sec_group.id]
   vpc_id = module.vpc.vpc.id
+  vpc_cidr = module.vpc.vpc.cidr_block
 //  s3_policy_arn = "
 //  sns_policy_arn = ""
 //  sqs_policy_arn = ""

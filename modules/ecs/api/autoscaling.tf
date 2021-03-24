@@ -24,6 +24,7 @@ resource "aws_appautoscaling_policy" "api_up" {
     }
   }
 
+  depends_on = [aws_appautoscaling_target.api]
 }
 
 resource "aws_appautoscaling_policy" "api_down" {
@@ -43,6 +44,8 @@ resource "aws_appautoscaling_policy" "api_down" {
       scaling_adjustment          = -1
     }
   }
+
+  depends_on = [aws_appautoscaling_target.api, aws_appautoscaling_policy.api_up]
 }
 
 # CloudWatch alarm that triggers the autoscaling up policy

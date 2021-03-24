@@ -20,9 +20,10 @@
               }
             ],
             portMappings: [
+              for port in port_mapping:
               {
-                hostPort: 8080,
-                containerPort: 8080
+                hostPort: port,
+                containerPort: port
               }
             ],
             "logConfiguration": {

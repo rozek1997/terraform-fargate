@@ -9,7 +9,8 @@ locals {
     vpc_id                  = var.vpc_id
     private_subnet_ids      = var.private_subnet_ids
     public_subnet_ids       = var.public_subnet_ids
-    security_group_ids      = var.security_group_ids
+    port_mappings           = var.open_ports
+    security_group_ids      = [aws_security_group.ecs_default.id]
     ecs_task_execution_role = aws_iam_role.ecs_task_execution
     ecs_task_role           = aws_iam_role.ecs_task
     ssm_secrets             = var.ssm_secrets
@@ -63,9 +64,17 @@ variable "vpc_id" {
   description = "VPC ID. That will differ based on chosen workspace"
 }
 
+variable "vpc_cidr"{}
+
 variable "private_subnet_ids" {}
 variable "public_subnet_ids" {}
-variable "security_group_ids" {}
+
+variable "open_ports" {
+  type = map(number)
+  default = {
+    UWSGI_PORT = 8080
+  }
+}
 
 #alb
 
@@ -88,6 +97,7 @@ variable "creds_bucket" {}
 variable "ssm_secrets" {
   type = list(string)
   default = [
+    "terraform_test"
   ]
 
 }

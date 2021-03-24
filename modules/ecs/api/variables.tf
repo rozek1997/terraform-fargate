@@ -69,7 +69,7 @@ locals {
       prod    = 10000
     }
     UWSGI_THREADS = {
-      dev     = 2
+      dev     = 4
       staging = 2
       prod    = 5
     }

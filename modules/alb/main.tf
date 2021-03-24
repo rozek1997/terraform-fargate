@@ -98,6 +98,8 @@ resource "aws_alb_target_group" "api" {
   }
 
   tags = local.tags
+
+  depends_on = [aws_alb.app]
 }
 
 resource "aws_alb_target_group" "cms" {
@@ -117,4 +119,6 @@ resource "aws_alb_target_group" "cms" {
   }
 
   tags = local.tags
+
+  depends_on = [aws_alb.app]
 }

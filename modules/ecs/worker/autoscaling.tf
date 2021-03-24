@@ -7,7 +7,7 @@ resource "aws_appautoscaling_target" "worker" {
 }
 
 resource "aws_appautoscaling_policy" "worker_up" {
-  name               = "scale-up"
+  name               = join("-", [terraform.workspace, var.module_name, "scaleUp"])
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.worker.resource_id
   scalable_dimension = aws_appautoscaling_target.worker.scalable_dimension
@@ -24,11 +24,12 @@ resource "aws_appautoscaling_policy" "worker_up" {
     }
   }
 
+  depends_on = [aws_appautoscaling_target.worker]
 }
 
 # Remove one task
 resource "aws_appautoscaling_policy" "worker_down" {
-  name               = "scale-up"
+  name               = join("-", [terraform.workspace, var.module_name, "scaleDown"])
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.worker.resource_id
   scalable_dimension = aws_appautoscaling_target.worker.scalable_dimension
@@ -44,6 +45,8 @@ resource "aws_appautoscaling_policy" "worker_down" {
       scaling_adjustment          = -1
     }
   }
+
+  depends_on = [aws_appautoscaling_target.worker, aws_appautoscaling_policy.worker_up]
 }
 
 resource "aws_cloudwatch_metric_alarm" "worker_service_cpu_high" {

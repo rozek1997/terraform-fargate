@@ -35,7 +35,7 @@ resource "aws_iam_policy" "ecs-ssm" {
           #          "kms:Decrypt" Required only if your secret uses a custom KMS key and not the default key. The ARN for your custom key should be added as a resource.
         ],
         Resource : [
-          "arn:aws:ssm:${var.aws_region}:${var.aws_region}:parameter/*"
+          "arn:aws:ssm:${var.aws_region}:${var.account_id}:parameter/*"
           #          "arn:aws:kms:${var.aws_region}:${var.aws_region}:key/aws/ssm"
         ]
       }

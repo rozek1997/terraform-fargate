@@ -22,7 +22,7 @@ resource "aws_ecs_service" "worker_service" {
   }
 
   lifecycle {
-    ignore_changes = [desired_count]
+    ignore_changes = [desired_count, task_definition]
   }
 
 }
@@ -41,6 +41,7 @@ resource "aws_ecs_task_definition" "worker_task_definition" {
     aws_region  = var.module_setup.aws_region,
     workspace   = terraform.workspace,
     ssm_secrets = var.module_setup.ssm_secrets,
+    port_mapping = values(var.module_setup.port_mappings),
     environments = concat(
       [for env_key, env in var.module_setup.static_env_vars : { name = env_key, value = tostring(env) }],
     [for env_key, env in local.dynamic_env_vars : { name = env_key, value = tostring(env[terraform.workspace]) } if env[terraform.workspace] != null]),

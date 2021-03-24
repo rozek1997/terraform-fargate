@@ -7,7 +7,7 @@ resource "aws_appautoscaling_target" "cms" {
 }
 
 resource "aws_appautoscaling_policy" "cms_up" {
-  name               = "scale-up"
+  name               = join("-", [terraform.workspace, var.module_name, "scaleUp"])
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.cms.resource_id
   scalable_dimension = aws_appautoscaling_target.cms.scalable_dimension
@@ -24,11 +24,13 @@ resource "aws_appautoscaling_policy" "cms_up" {
     }
   }
 
+  depends_on = [aws_appautoscaling_target.cms]
+
 }
 
 # Remove one task
 resource "aws_appautoscaling_policy" "cms_down" {
-  name               = "scale-up"
+  name               = join("-", [terraform.workspace, var.module_name, "scaleDown"])
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.cms.resource_id
   scalable_dimension = aws_appautoscaling_target.cms.scalable_dimension
@@ -44,6 +46,8 @@ resource "aws_appautoscaling_policy" "cms_down" {
       scaling_adjustment          = -1
     }
   }
+
+  depends_on = [aws_appautoscaling_target.cms, aws_appautoscaling_policy.cms_up]
 }
 
 // !!! currently cms are using networks out based scaling by it is not available out of the box in AWS/ECS namespace

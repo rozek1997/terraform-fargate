@@ -1,7 +1,7 @@
 resource "aws_ecs_service" "api-service" {
   name            = join("-", [var.module_setup.application_name, terraform.workspace, var.module_name])
   cluster         = var.module_setup.cluster.arn
-  task_definition = aws_ecs_task_definition.api_task-definition.arn
+  task_definition = "${aws_ecs_task_definition.api_task_definition.family}:${max(aws_ecs_task_definition.api_task_definition.revision, data.aws_ecs_task_definition.api_td.revision)}"
 //  launch_type     = var.module_setup.launch_type
 
   capacity_provider_strategy {
@@ -33,8 +33,11 @@ resource "aws_ecs_service" "api-service" {
 
 }
 
+data "aws_ecs_task_definition" "api_td" {
+  task_definition = aws_ecs_task_definition.api_task_definition.family
+}
 
-resource "aws_ecs_task_definition" "api_task-definition" {
+resource "aws_ecs_task_definition" "api_task_definition" {
   family                   = join("-", [terraform.workspace, var.module_name])
   execution_role_arn       = var.module_setup.ecs_task_execution_role.arn
   task_role_arn            = var.module_setup.ecs_task_role.arn
@@ -47,6 +50,7 @@ resource "aws_ecs_task_definition" "api_task-definition" {
     aws_region  = var.module_setup.aws_region,
     workspace   = terraform.workspace,
     ssm_secrets = var.module_setup.ssm_secrets,
+    port_mapping = values(var.module_setup.port_mappings),
     environments = concat(
       [for env_key, env in var.module_setup.static_env_vars : { name = env_key, value = tostring(env) }],
     [for env_key, env in local.dynamic_env_vars : { name = env_key, value = tostring(env[terraform.workspace]) } if env[terraform.workspace] != null]),
